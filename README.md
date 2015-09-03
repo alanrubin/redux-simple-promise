@@ -46,7 +46,7 @@ export function loadUser(username) {
 ```
 
 will dispatch immediatelly
-```json
+```js
 {
 	type: 'LOAD_USER',
 	payload: {
@@ -57,7 +57,7 @@ will dispatch immediatelly
 ```
 
 Assuming promise resolves with `{ id: '1', name: 'Alan Rubin' }`, then it will dispatch
-```json
+```js
 {
 	type: 'LOAD_USER_RESOLVED',
 	payload: {
@@ -68,7 +68,7 @@ Assuming promise resolves with `{ id: '1', name: 'Alan Rubin' }`, then it will d
 ```
 
 Assuming promise rejects with `Error` object, then it will dispatch
-```json
+```js
 {
 	type: 'LOAD_USER_REJECTED',
 	payload: {
