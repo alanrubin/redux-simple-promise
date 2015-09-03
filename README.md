@@ -78,7 +78,7 @@ Assuming promise rejects with `Error` object, then it will dispatch
 }
 ```
 
-The middleware also returns the original promise, so you can listen to it and act accordingly from your view if needed (for example redirect to a new route).
+The middleware also returns the original promise, so you can listen to it and act accordingly from your component if needed (for example redirect to a new route).
 
 ## Configuration
 
