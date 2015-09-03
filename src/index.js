@@ -4,6 +4,14 @@ function isPromise(val) {
   return val && typeof val.then === 'function';
 }
 
+export function resolve(actionName) {
+  return actionName + '_RESOLVE';
+}
+
+export function reject(actionName) {
+  return actionName + '_REJECT';
+}
+
 export default function promiseMiddleware({ dispatch }) {
   return next => action => {
     if (!isFSA(action)) {
@@ -21,7 +29,12 @@ export default function promiseMiddleware({ dispatch }) {
     // (1) Dispatch actionName with payload with arguments apart from promise
 
     // Clone original action
-    let newAction = { ...action };
+    let newAction = {
+      type: action.type,
+      payload: {
+        ...action.payload
+      }
+    };
 
     if (Object.keys(newAction.payload).length === 1) {
       // No arguments beside promise, remove all payload
@@ -33,6 +46,23 @@ export default function promiseMiddleware({ dispatch }) {
 
     dispatch(newAction);
 
+    // (2) Listen to promise and dispatch payload with new actionName
+    action.payload.promise.then(
+      (result) => {
+        dispatch({
+          type: resolve(action.type),
+          payload: {
+            // newAction payload without promise, delete on last step
+            ...newAction.payload,
+            promise: result
+          }
+        });
+      },
+      (error) => {
+        return error;
+      }
+    );
+
 
     // return isPromise(action.payload)
     //   ? action.payload.then(
@@ -41,12 +71,4 @@ export default function promiseMiddleware({ dispatch }) {
     //     )
     //   : next(action);
   };
-}
-
-export function resolve(actionName) {
-  return actionName + '_RESOLVE';
-}
-
-export function reject(actionName) {
-  return actionName + '_REJECT';
 }

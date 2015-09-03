@@ -65,6 +65,27 @@ describe('promiseMiddleware', () => {
       }
     });
   });
+
+  it('dispatches resolve action with arguments', async () => {
+    await dispatch({
+      type: 'ACTION_TYPE_2',
+      payload: {
+        promise: Promise.resolve(foobar),
+        foo2: 'bar2'
+      }
+    });
+
+    expect(baseDispatch.calledTwice).to.be.true;
+
+    expect(baseDispatch.secondCall.args[0]).to.deep.equal({
+      type: resolve('ACTION_TYPE_2'),
+      payload: {
+        promise: foobar,
+        foo2: 'bar2'
+      }
+    });
+  });
+
   // it('handles Flux standard actions', async () => {
   //   await dispatch({
   //     type: 'ACTION_TYPE',
