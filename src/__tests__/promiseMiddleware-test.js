@@ -26,7 +26,6 @@ describe('promiseMiddleware', () => {
     foobar = { foo: 'bar' };
     err = new Error();
   });
-  
   it('dispatches first action before promise without arguments', () => {
     dispatch({
       type: 'ACTION_TYPE',
@@ -143,41 +142,6 @@ describe('promiseMiddleware', () => {
     expect(dispatchedResult).to.eventually.be.rejectedWith(err);
   });
 
-  // TODO Configure the resolve and reject strings on initialisation
-
-  // it('handles Flux standard actions', async () => {
-  //   await dispatch({
-  //     type: 'ACTION_TYPE',
-  //     payload: Promise.resolve(foobar)
-  //   });
-
-  //   expect(baseDispatch.calledOnce).to.be.true;
-  //   expect(baseDispatch.firstCall.args[0]).to.deep.equal({
-  //     type: 'ACTION_TYPE',
-  //     payload: foobar
-  //   });
-
-  //   await dispatch({
-  //     type: 'ACTION_TYPE',
-  //     payload: Promise.reject(err)
-  //   }).catch(noop);
-
-  //   expect(baseDispatch.calledTwice).to.be.true;
-  //   expect(baseDispatch.secondCall.args[0]).to.deep.equal({
-  //     type: 'ACTION_TYPE',
-  //     payload: err,
-  //     error: true
-  //   });
-  // });
-
-  // it('handles promises', async () => {
-  //   await dispatch(Promise.resolve(foobar));
-  //   expect(baseDispatch.calledOnce).to.be.true;
-  //   expect(baseDispatch.firstCall.args[0]).to.equal(foobar);
-
-  //   await expect(dispatch(Promise.reject(err))).to.eventually.be.rejectedWith(err);
-  // });
-
   it('returns the reject and resolve strings with default values', () => {
     expect(resolve('MY_ACTION')).to.equal('MY_ACTION_RESOLVED');
     expect(reject('MY_ACTION')).to.equal('MY_ACTION_REJECTED');
@@ -196,12 +160,12 @@ describe('promiseMiddleware', () => {
     });
   });
 
-  // it('starts async dispatches from beginning of middleware chain', async () => {
-  //   dispatch({ type: GIVE_ME_META });
-  //   dispatch({ type: GIVE_ME_META });
-  //   expect(baseDispatch.args.map(args => args[0].meta)).to.eql([
-  //     'here you go',
-  //     'here you go'
-  //   ]);
-  // });
+  it('starts async dispatches from beginning of middleware chain', async () => {
+    dispatch({ type: GIVE_ME_META });
+    dispatch({ type: GIVE_ME_META });
+    expect(baseDispatch.args.map(args => args[0].meta)).to.eql([
+      'here you go',
+      'here you go'
+    ]);
+  });
 });

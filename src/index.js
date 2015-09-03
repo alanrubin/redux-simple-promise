@@ -18,11 +18,6 @@ export default function promiseMiddleware(resolvedName = '_RESOLVED', rejectedNa
   [RESOLVED_NAME, REJECTED_NAME] = [resolvedName, rejectedName];
 
   return ({ dispatch }) => next => action => {
-    // if (!isFSA(action)) {
-    //   return isPromise(action)
-    //     ? action.then(dispatch)
-    //     : next(action);
-    // }
 
     if (!isFSA(action) || !action.payload || !isPromise(action.payload.promise)) {
       return next(action);
@@ -73,13 +68,5 @@ export default function promiseMiddleware(resolvedName = '_RESOLVED', rejectedNa
         return error;
       }
     );
-
-
-    // return isPromise(action.payload)
-    //   ? action.payload.then(
-    //       result => dispatch({ ...action, payload: result }),
-    //       error => dispatch({ ...action, payload: error, error: true })
-    //     )
-    //   : next(action);
   };
 }
