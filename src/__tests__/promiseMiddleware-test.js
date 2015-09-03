@@ -68,7 +68,7 @@ describe('promiseMiddleware', () => {
 
   it('dispatches resolve action with arguments', async () => {
     await dispatch({
-      type: 'ACTION_TYPE_2',
+      type: 'ACTION_TYPE_RESOLVE',
       payload: {
         promise: Promise.resolve(foobar),
         foo2: 'bar2'
@@ -78,10 +78,32 @@ describe('promiseMiddleware', () => {
     expect(baseDispatch.calledTwice).to.be.true;
 
     expect(baseDispatch.secondCall.args[0]).to.deep.equal({
-      type: resolve('ACTION_TYPE_2'),
+      type: resolve('ACTION_TYPE_RESOLVE'),
       payload: {
         promise: foobar,
         foo2: 'bar2'
+      }
+    });
+  });
+
+  it('dispatches reject action with arguments', async () => {
+    await dispatch({
+      type: 'ACTION_TYPE_REJECT',
+      payload: {
+        promise: Promise.reject(err),
+        foo3: 'bar3',
+        foo4: 'bar4'
+      }
+    });
+
+    expect(baseDispatch.calledTwice).to.be.true;
+
+    expect(baseDispatch.secondCall.args[0]).to.deep.equal({
+      type: reject('ACTION_TYPE_REJECT'),
+      payload: {
+        promise: err,
+        foo3: 'bar3',
+        foo4: 'bar4'
       }
     });
   });

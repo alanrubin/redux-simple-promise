@@ -52,14 +52,21 @@ export default function promiseMiddleware({ dispatch }) {
         dispatch({
           type: resolve(action.type),
           payload: {
-            // newAction payload without promise, delete on last step
+            // newAction payload without promise, only with original arguments, delete on last step
             ...newAction.payload,
             promise: result
           }
         });
       },
       (error) => {
-        return error;
+        dispatch({
+          type: reject(action.type),
+          payload: {
+            // newAction payload without promise, only with original arguments, delete on last step
+            ...newAction.payload,
+            promise: error
+          }
+        });
       }
     );
 
