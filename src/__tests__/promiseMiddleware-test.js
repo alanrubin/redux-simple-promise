@@ -27,30 +27,68 @@ describe('promiseMiddleware', () => {
     err = new Error();
   });
 
-  it('handles Flux standard actions', async () => {
+  // it('dispatches first action before promise'), async () => {
+
+  //   }
+  // });
+
+  it('dispatches first action before promise without arguments', async () => {
     await dispatch({
       type: 'ACTION_TYPE',
-      payload: Promise.resolve(foobar)
+      payload: {
+        promise: new Promise(() => {})
+      }
     });
 
     expect(baseDispatch.calledOnce).to.be.true;
+
     expect(baseDispatch.firstCall.args[0]).to.deep.equal({
-      type: 'ACTION_TYPE',
-      payload: foobar
-    });
-
-    await dispatch({
-      type: 'ACTION_TYPE',
-      payload: Promise.reject(err)
-    }).catch(noop);
-
-    expect(baseDispatch.calledTwice).to.be.true;
-    expect(baseDispatch.secondCall.args[0]).to.deep.equal({
-      type: 'ACTION_TYPE',
-      payload: err,
-      error: true
+      type: 'ACTION_TYPE'
     });
   });
+
+  it('dispatches first action before promise with arguments', async () => {
+    await dispatch({
+      type: 'ACTION_TYPE',
+      payload: {
+        promise: new Promise(() => {}),
+        foo: 'bar'
+      }
+    });
+
+    expect(baseDispatch.calledOnce).to.be.true;
+
+    expect(baseDispatch.firstCall.args[0]).to.deep.equal({
+      type: 'ACTION_TYPE',
+      payload: {
+        foo: 'bar'
+      }
+    });
+  });
+  // it('handles Flux standard actions', async () => {
+  //   await dispatch({
+  //     type: 'ACTION_TYPE',
+  //     payload: Promise.resolve(foobar)
+  //   });
+
+  //   expect(baseDispatch.calledOnce).to.be.true;
+  //   expect(baseDispatch.firstCall.args[0]).to.deep.equal({
+  //     type: 'ACTION_TYPE',
+  //     payload: foobar
+  //   });
+
+  //   await dispatch({
+  //     type: 'ACTION_TYPE',
+  //     payload: Promise.reject(err)
+  //   }).catch(noop);
+
+  //   expect(baseDispatch.calledTwice).to.be.true;
+  //   expect(baseDispatch.secondCall.args[0]).to.deep.equal({
+  //     type: 'ACTION_TYPE',
+  //     payload: err,
+  //     error: true
+  //   });
+  // });
 
   it('handles promises', async () => {
     await dispatch(Promise.resolve(foobar));
