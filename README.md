@@ -1,7 +1,7 @@
 redux-simple-promise
 =============
 
-[![build status](https://img.shields.io/travis/acdlite/redux-simple-promise/master.svg?style=flat-square)](https://travis-ci.org/alanrubin/redux-simple-promise)
+[![build status](https://img.shields.io/travis/alanrubin/redux-simple-promise/master.svg?style=flat-square)](https://travis-ci.org/alanrubin/redux-simple-promise)
 [![npm version](https://img.shields.io/npm/v/redux-simple-promise.svg?style=flat-square)](https://www.npmjs.com/package/redux-simple-promise)
 
 [FSA](https://github.com/acdlite/flux-standard-action)-compliant promise [middleware](https://github.com/gaearon/redux/blob/master/docs/middleware.md) for Redux with simple behaviour with minimal boilerplate declarations.
