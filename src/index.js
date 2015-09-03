@@ -20,3 +20,11 @@ export default function promiseMiddleware({ dispatch }) {
       : next(action);
   };
 }
+
+export function resolve(actionName) {
+  return actionName + '_RESOLVE';
+}
+
+export function reject(actionName) {
+  return actionName + '_REJECT';
+}

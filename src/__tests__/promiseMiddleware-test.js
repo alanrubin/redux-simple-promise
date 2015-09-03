@@ -1,5 +1,6 @@
 import promiseMiddleware from '../';
 import { spy } from 'sinon';
+import { resolve, reject } from '../';
 
 function noop() {}
 const GIVE_ME_META = 'GIVE_ME_META';
@@ -57,6 +58,11 @@ describe('promiseMiddleware', () => {
     expect(baseDispatch.firstCall.args[0]).to.equal(foobar);
 
     await expect(dispatch(Promise.reject(err))).to.eventually.be.rejectedWith(err);
+  });
+
+  it('returns the reject and resolve strings', () => {
+    expect(resolve('MY_ACTION')).to.equal('MY_ACTION_RESOLVE');
+    expect(reject('MY_ACTION')).to.equal('MY_ACTION_REJECT');
   });
 
   it('ignores non-promises', async () => {
