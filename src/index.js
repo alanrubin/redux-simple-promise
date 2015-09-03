@@ -4,16 +4,20 @@ function isPromise(val) {
   return val && typeof val.then === 'function';
 }
 
+let [RESOLVED_NAME, REJECTED_NAME] = [];
+
 export function resolve(actionName) {
-  return actionName + '_RESOLVE';
+  return actionName + RESOLVED_NAME;
 }
 
 export function reject(actionName) {
-  return actionName + '_REJECT';
+  return actionName + REJECTED_NAME;
 }
 
-export default function promiseMiddleware({ dispatch }) {
-  return next => action => {
+export default function promiseMiddleware(resolvedName = '_RESOLVED', rejectedName = '_REJECTED') {
+  [RESOLVED_NAME, REJECTED_NAME] = [resolvedName, rejectedName];
+
+  return ({ dispatch }) => next => action => {
     // if (!isFSA(action)) {
     //   return isPromise(action)
     //     ? action.then(dispatch)
@@ -48,7 +52,7 @@ export default function promiseMiddleware({ dispatch }) {
     return action.payload.promise.then(
       (result) => {
         dispatch({
-          type: resolve(action.type),
+          type: resolve(action.type, resolvedName),
           payload: {
             // newAction payload without promise, only with original arguments, delete on last step
             ...newAction.payload,
@@ -59,7 +63,7 @@ export default function promiseMiddleware({ dispatch }) {
       },
       (error) => {
         dispatch({
-          type: reject(action.type),
+          type: reject(action.type, rejectedName),
           payload: {
             // newAction payload without promise, only with original arguments, delete on last step
             ...newAction.payload,

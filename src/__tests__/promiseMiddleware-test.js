@@ -21,17 +21,12 @@ describe('promiseMiddleware', () => {
     baseDispatch = spy();
     dispatch = function d(action) {
       const methods = { dispatch: d, getState: noop };
-      return metaMiddleware()(promiseMiddleware(methods)(baseDispatch))(action);
+      return metaMiddleware()(promiseMiddleware()(methods)(baseDispatch))(action);
     };
     foobar = { foo: 'bar' };
     err = new Error();
   });
-
-  // it('dispatches first action before promise'), async () => {
-
-  //   }
-  // });
-
+  
   it('dispatches first action before promise without arguments', () => {
     dispatch({
       type: 'ACTION_TYPE',
@@ -183,9 +178,9 @@ describe('promiseMiddleware', () => {
   //   await expect(dispatch(Promise.reject(err))).to.eventually.be.rejectedWith(err);
   // });
 
-  it('returns the reject and resolve strings', () => {
-    expect(resolve('MY_ACTION')).to.equal('MY_ACTION_RESOLVE');
-    expect(reject('MY_ACTION')).to.equal('MY_ACTION_REJECT');
+  it('returns the reject and resolve strings with default values', () => {
+    expect(resolve('MY_ACTION')).to.equal('MY_ACTION_RESOLVED');
+    expect(reject('MY_ACTION')).to.equal('MY_ACTION_REJECTED');
   });
 
   it('ignores non-promises', async () => {
