@@ -1,6 +1,6 @@
 {
   "name": "redux-simple-promise",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "FSA-compliant promise middleware for Redux with simple behaviour with minimal boilerplate declarations.",
   "main": "lib/index.js",
   "scripts": {
