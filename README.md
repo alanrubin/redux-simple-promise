@@ -80,6 +80,34 @@ Assuming promise rejects with `Error` object, then it will dispatch
 
 The middleware also returns the original promise, so you can listen to it and act accordingly from your component if needed (for example redirect to a new route).
 
+### Usage in reducers
+
+Another nice feature is that `resolve` and `reject` functions can be also imported from the package in order to give you nice semantic switch conditions when writing reducers for resolved and rejected actions. Assuming the example above, in your reducer:
+
+```js
+import { resolve, reject } from 'redux-simple-promise';
+
+function users(state = {}, action) {
+  switch (action.type) {
+  case LOAD_USER:
+    return Object.assign({}, state, {
+      action.payload.username: { isLoading: true }
+    });
+  case resolve(LOAD_USER):
+    return Object.assign({}, state, {
+      action.payload.username: action.payload.promise
+    });
+  case reject(LOAD_USER):
+  	return Object.assign({}, state, {
+      action.payload.username: { error: action.payload.promise }
+    });
+  default:
+    return state;
+  }
+}
+
+```
+
 ## Configuration
 
 You can configure the string being added to the action type when resolved or rejected by declaring it when initialiazing the middleware, so considering the example above, if you do
