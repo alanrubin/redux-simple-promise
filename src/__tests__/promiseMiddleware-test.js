@@ -32,8 +32,8 @@ describe('promiseMiddleware', () => {
   //   }
   // });
 
-  it('dispatches first action before promise without arguments', async () => {
-    await dispatch({
+  it('dispatches first action before promise without arguments', () => {
+    dispatch({
       type: 'ACTION_TYPE',
       payload: {
         promise: new Promise(() => {})
@@ -47,8 +47,8 @@ describe('promiseMiddleware', () => {
     });
   });
 
-  it('dispatches first action before promise with arguments', async () => {
-    await dispatch({
+  it('dispatches first action before promise with arguments', () => {
+    dispatch({
       type: 'ACTION_TYPE',
       payload: {
         promise: new Promise(() => {}),
@@ -108,6 +108,48 @@ describe('promiseMiddleware', () => {
     });
   });
 
+  it('returns the original promise from dispatch', () => {
+    let promiseDispatched = new Promise(() => {});
+
+    let dispatchedResult = dispatch({
+      type: 'ACTION_TYPE_RESOLVE',
+      payload: {
+        promise: promiseDispatched,
+        foo2: 'bar2'
+      }
+    });
+    // Unable to compare promise directly for some reason, so comparing functions
+    expect(dispatchedResult.then).to.be.equal(promiseDispatched.then);
+  });
+
+  it('resolves the original promise results from dispatch', () => {
+    let promiseDispatched = Promise.resolve(foobar);
+
+    let dispatchedResult = dispatch({
+      type: 'ACTION_TYPE_RESOLVE',
+      payload: {
+        promise: promiseDispatched,
+        foo2: 'bar2'
+      }
+    });
+    expect(dispatchedResult).to.eventually.equal(foobar);
+  });
+
+  it('reject the original promise from dispatch', () => {
+    let promiseDispatched = Promise.reject(err);
+
+    let dispatchedResult = dispatch({
+      type: 'ACTION_TYPE_REJECT',
+      payload: {
+        promise: promiseDispatched,
+        foo2: 'bar2'
+      }
+    });
+    expect(dispatchedResult).to.eventually.be.rejectedWith(err);
+  });
+
+  // TODO Configure the resolve and reject strings on initialisation
+
   // it('handles Flux standard actions', async () => {
   //   await dispatch({
   //     type: 'ACTION_TYPE',
@@ -133,13 +175,13 @@ describe('promiseMiddleware', () => {
   //   });
   // });
 
-  it('handles promises', async () => {
-    await dispatch(Promise.resolve(foobar));
-    expect(baseDispatch.calledOnce).to.be.true;
-    expect(baseDispatch.firstCall.args[0]).to.equal(foobar);
+  // it('handles promises', async () => {
+  //   await dispatch(Promise.resolve(foobar));
+  //   expect(baseDispatch.calledOnce).to.be.true;
+  //   expect(baseDispatch.firstCall.args[0]).to.equal(foobar);
 
-    await expect(dispatch(Promise.reject(err))).to.eventually.be.rejectedWith(err);
-  });
+  //   await expect(dispatch(Promise.reject(err))).to.eventually.be.rejectedWith(err);
+  // });
 
   it('returns the reject and resolve strings', () => {
     expect(resolve('MY_ACTION')).to.equal('MY_ACTION_RESOLVE');
@@ -159,12 +201,12 @@ describe('promiseMiddleware', () => {
     });
   });
 
-  it('starts async dispatches from beginning of middleware chain', async () => {
-    await dispatch(Promise.resolve({ type: GIVE_ME_META }));
-    dispatch({ type: GIVE_ME_META });
-    expect(baseDispatch.args.map(args => args[0].meta)).to.eql([
-      'here you go',
-      'here you go'
-    ]);
-  });
+  // it('starts async dispatches from beginning of middleware chain', async () => {
+  //   dispatch({ type: GIVE_ME_META });
+  //   dispatch({ type: GIVE_ME_META });
+  //   expect(baseDispatch.args.map(args => args[0].meta)).to.eql([
+  //     'here you go',
+  //     'here you go'
+  //   ]);
+  // });
 });
