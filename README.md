@@ -23,11 +23,11 @@ composeStoreWithMiddleware = applyMiddleware(
 
 ```
 
-To use the middleware, dispatch a `promise` property and optional properties within the `payload` of the action and specify the action `type` string as you normally do. The entire payload is dispatched from the pending action and is useful for optimistic updates.
+To use the middleware, dispatch a `promise` property and optional additional properties within the `payload` of the action and specify the action `type` string as you normally do. 
 
-The pending action is dispatched immediately. The fulfilled action is dispatched only if the promise is resolved, e.g., if it was successful; and the rejected action is dispatched only if the promise is rejected, e.g., if an error occurred.
+The pending action is dispatched immediately, with `type` the same as the original dispatching action with all original `payload` properties apart from the `promise` as the payload object (those are useful for optimistic updates). The resolve action is dispatched only if the promise is resolved, e.g., if it was successful; and the rejected action is dispatched only if the promise is rejected, e.g., if an error occurred.
 
-Both fullfilled actions (resolved and rejected) will be dispatched with the same format of payload (including the optional properties) but with a `promise` property containing the resolve value of the promise. In the case of a rejected promise, an `error` is returned in the promise property. Also those fullfiled actions will have the original type added by a suffix (default is `_RESOLVED` for resolved and `_REJECTED` for rejected).
+Both fullfilled actions (resolved and rejected) will be dispatched with the result of the promise as the payload object and all other remaining properties will be dispatched inside the `meta` property. More specifically, in the case of a rejected promise, an `error` is returned in the payload property. Also those fullfiled actions will have the original `type` added by a suffix (default is `_RESOLVED` for resolved and `_REJECTED` for rejected).
 
 Example:
 
@@ -50,9 +50,8 @@ will dispatch immediatelly
 {
 	type: 'LOAD_USER',
 	payload: {
-		promise: thePromiseReturned,
 		username: 'alanrubin'
-	}
+	} 
 }
 ```
 
@@ -60,8 +59,8 @@ Assuming promise resolves with `{ id: '1', name: 'Alan Rubin' }`, then it will d
 ```js
 {
 	type: 'LOAD_USER_RESOLVED',
-	payload: {
-		promise: { id: '1', name: 'Alan Rubin' },
+	payload: { id: '1', name: 'Alan Rubin' },
+	meta: {
 		username: 'alanrubin'
 	}
 }
@@ -71,18 +70,20 @@ Assuming promise rejects with `Error` object, then it will dispatch
 ```js
 {
 	type: 'LOAD_USER_REJECTED',
-	payload: {
-		promise: Error,
+	payload: Error,
+	meta: {
 		username: 'alanrubin'
 	}
 }
 ```
 
-The middleware also returns the original promise, so you can listen to it and act accordingly from your component if needed (for example redirect to a new route).
+The middleware also returns the original promise, so you can listen to it and act accordingly from your component if needed (for example redirecting to a new route).
+
+The middleware doesn't include the original promise in the 3 processed actions as it is not useful in the reducers - it is a bad practice to store promises in the state as the state should be serializable.
 
 ### Usage in reducers
 
-Another nice feature is that `resolve` and `reject` functions can be also imported from the package in order to give you nice semantic switch conditions when writing reducers for resolved and rejected actions. Assuming the example above, in your reducer:
+Another nice feature is that `resolve` and `reject` functions can be imported from the package in order to provide nice semantic switch conditions when writing reducers for those actions. Assuming the example above, in your reducer:
 
 ```js
 import { resolve, reject } from 'redux-simple-promise';
@@ -95,11 +96,11 @@ function users(state = {}, action) {
     });
   case resolve(LOAD_USER):
     return Object.assign({}, state, {
-      action.payload.username: action.payload.promise
+      action.payload.meta.username: action.payload
     });
   case reject(LOAD_USER):
   	return Object.assign({}, state, {
-      action.payload.username: { error: action.payload.promise }
+      action.payload.meta.username: { error: action.payload }
     });
   default:
     return state;
@@ -125,7 +126,7 @@ then resolved/rejected promised will trigger actions as `'LOAD_USER_MY_RESOLVED'
 
 ## Inspiration
 
-I have tried to mix the best behaviour from both [redux-promise](https://github.com/acdlite/redux-promise) and [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware) projects, avoiding as much as possible additional boilerplate declarations (such as declaring 3 times the action type or passing the arguments of the first dispatch in data or meta).
+I have tried to mix the best behaviour from both [redux-promise](https://github.com/acdlite/redux-promise) and [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware) projects, avoiding as much as possible additional boilerplate declarations (such as declaring 3 times the action type or passing the arguments of the first dispatch in data or meta) and the most consistent behavior (at least in my opinion...).
 
 Thanks to both projects for inspiration, specially to [redux-promise](https://github.com/acdlite/redux-promise) for the project setup and test inspiration.
 
