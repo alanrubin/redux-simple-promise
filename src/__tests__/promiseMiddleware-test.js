@@ -73,8 +73,8 @@ describe('promiseMiddleware', () => {
 
     expect(baseDispatch.secondCall.args[0]).to.deep.equal({
       type: resolve('ACTION_TYPE_RESOLVE'),
-      payload: {
-        promise: foobar,
+      payload: foobar,
+      meta: {
         foo2: 'bar2'
       }
     });
@@ -94,8 +94,8 @@ describe('promiseMiddleware', () => {
 
     expect(baseDispatch.secondCall.args[0]).to.deep.equal({
       type: reject('ACTION_TYPE_REJECT'),
-      payload: {
-        promise: err,
+      payload: err,
+      meta: {
         foo3: 'bar3',
         foo4: 'bar4'
       }

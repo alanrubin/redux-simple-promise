@@ -48,22 +48,16 @@ export default function promiseMiddleware(resolvedName = '_RESOLVED', rejectedNa
       (result) => {
         dispatch({
           type: resolve(action.type, resolvedName),
-          payload: {
-            // newAction payload without promise, only with original arguments, delete on last step
-            ...newAction.payload,
-            promise: result
-          }
+          payload: result,
+          meta: newAction.payload
         });
         return result;
       },
       (error) => {
         dispatch({
           type: reject(action.type, rejectedName),
-          payload: {
-            // newAction payload without promise, only with original arguments, delete on last step
-            ...newAction.payload,
-            promise: error
-          }
+          payload: error,
+          meta: newAction.payload
         });
         return error;
       }
