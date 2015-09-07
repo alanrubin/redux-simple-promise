@@ -96,11 +96,11 @@ function users(state = {}, action) {
     });
   case resolve(LOAD_USER):
     return Object.assign({}, state, {
-      action.payload.meta.username: action.payload
+      action.meta.username: action.payload
     });
   case reject(LOAD_USER):
   	return Object.assign({}, state, {
-      action.payload.meta.username: { error: action.payload }
+      action.meta.username: { error: action.payload }
     });
   default:
     return state;
