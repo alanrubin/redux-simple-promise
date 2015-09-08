@@ -11,6 +11,13 @@ function metaMiddleware() {
       : next(action);
 }
 
+describe('before promiseMiddleware is called', () => {
+  it('returns the reject and resolve strings with default values', () => {
+    expect(resolve('MY_ACTION')).to.equal('MY_ACTION_RESOLVED');
+    expect(reject('MY_ACTION')).to.equal('MY_ACTION_REJECTED');
+  });
+});
+
 describe('promiseMiddleware', () => {
   let baseDispatch;
   let dispatch;

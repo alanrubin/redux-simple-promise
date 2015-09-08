@@ -4,7 +4,7 @@ function isPromise(val) {
   return val && typeof val.then === 'function';
 }
 
-let [RESOLVED_NAME, REJECTED_NAME] = [];
+let [RESOLVED_NAME, REJECTED_NAME] = ['_RESOLVED', '_REJECTED'];
 
 export function resolve(actionName) {
   return actionName + RESOLVED_NAME;
@@ -14,8 +14,8 @@ export function reject(actionName) {
   return actionName + REJECTED_NAME;
 }
 
-export default function promiseMiddleware(resolvedName = '_RESOLVED', rejectedName = '_REJECTED') {
-  [RESOLVED_NAME, REJECTED_NAME] = [resolvedName, rejectedName];
+export default function promiseMiddleware(resolvedName, rejectedName) {
+  [RESOLVED_NAME, REJECTED_NAME] = [resolvedName || RESOLVED_NAME, rejectedName || REJECTED_NAME];
 
   return ({ dispatch }) => next => action => {
 
