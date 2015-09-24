@@ -88,14 +88,20 @@ describe('promiseMiddleware', () => {
   });
 
   it('dispatches reject action with arguments', async () => {
-    await dispatch({
-      type: 'ACTION_TYPE_REJECT',
-      payload: {
-        promise: Promise.reject(err),
-        foo3: 'bar3',
-        foo4: 'bar4'
-      }
-    });
+    try {
+      await dispatch({
+        type: 'ACTION_TYPE_REJECT',
+        payload: {
+          promise: Promise.reject(err),
+          foo3: 'bar3',
+          foo4: 'bar4'
+        }
+      });
+    } catch (e) {
+      // We're not interested in the rejection. We just need to wait until all
+      // dispatching is done.
+      true;
+    }
 
     expect(baseDispatch.calledTwice).to.be.true;
 
@@ -133,7 +139,7 @@ describe('promiseMiddleware', () => {
         foo2: 'bar2'
       }
     });
-    expect(dispatchedResult).to.eventually.equal(foobar);
+    return expect(dispatchedResult).to.eventually.equal(foobar);
   });
 
   it('reject the original promise from dispatch', () => {
@@ -146,7 +152,7 @@ describe('promiseMiddleware', () => {
         foo2: 'bar2'
       }
     });
-    expect(dispatchedResult).to.eventually.be.rejectedWith(err);
+    return expect(dispatchedResult).to.eventually.be.rejectedWith(err);
   });
 
   it('returns the reject and resolve strings with default values', () => {
