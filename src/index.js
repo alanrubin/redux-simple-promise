@@ -59,7 +59,7 @@ export default function promiseMiddleware(resolvedName, rejectedName) {
           payload: error,
           meta: newAction.payload
         });
-        return error;
+        throw error;
       }
     );
   };
