@@ -51,7 +51,7 @@ export default function promiseMiddleware(resolvedName, rejectedName) {
           ...newAction.payload
         }
       }
-    }
+    };
 
     if (Object.keys(nextActionBase.meta.payload).length === 0) {
       // No arguments were given beside the promise, no need to include them
