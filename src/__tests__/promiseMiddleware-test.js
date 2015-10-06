@@ -82,7 +82,9 @@ describe('promiseMiddleware', () => {
       type: resolve('ACTION_TYPE_RESOLVE'),
       payload: foobar,
       meta: {
-        foo2: 'bar2'
+        payload: {
+          foo2: 'bar2'
+        }
       }
     });
   });
@@ -109,9 +111,53 @@ describe('promiseMiddleware', () => {
       type: reject('ACTION_TYPE_REJECT'),
       payload: err,
       meta: {
-        foo3: 'bar3',
-        foo4: 'bar4'
+        payload: {
+          foo3: 'bar3',
+          foo4: 'bar4'
+        }
       }
+    });
+  });
+
+  it('does not overwrite any meta arguments', async () => {
+    await dispatch({
+      type: 'ACTION_TYPE_RESOLVE',
+      payload: {
+        promise: Promise.resolve(foobar),
+        foo2: 'bar2'
+      },
+      meta: {
+        foo3: 'bar3'
+      }
+    });
+
+    expect(baseDispatch.calledTwice).to.be.true;
+
+    expect(baseDispatch.secondCall.args[0]).to.deep.equal({
+      type: resolve('ACTION_TYPE_RESOLVE'),
+      payload: foobar,
+      meta: {
+        foo3: 'bar3',
+        payload: {
+          foo2: 'bar2'
+        }
+      }
+    });
+  });
+
+  it('does not include empty meta payload attribute', async () => {
+    await dispatch({
+      type: 'ACTION_TYPE_RESOLVE',
+      payload: {
+        promise: Promise.resolve(foobar)
+      }
+    });
+
+    expect(baseDispatch.calledTwice).to.be.true;
+
+    expect(baseDispatch.secondCall.args[0]).to.deep.equal({
+      type: resolve('ACTION_TYPE_RESOLVE'),
+      payload: foobar
     });
   });
 
