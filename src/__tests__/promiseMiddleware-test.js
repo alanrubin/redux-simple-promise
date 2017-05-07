@@ -1,6 +1,6 @@
 import { spy } from 'sinon';
 import 'babel-polyfill';
-import promiseMiddleware, { resolve, reject, unresolve, unreject } from '../';
+import promiseMiddleware, { resolve, reject, unresolve, unreject, REJECTED_NAME, RESOLVED_NAME } from '../';
 
 function noop() {}
 const GIVE_ME_META = 'GIVE_ME_META';
@@ -15,6 +15,11 @@ function metaMiddleware() {
 describe('before promiseMiddleware is called', () => {
   it('returns the rejected strings with default values', () => {
     expect(reject('MY_ACTION')).to.equal('MY_ACTION_REJECTED');
+  });
+
+  it('export the rejected name and resolved name strings with default values', () => {
+      expect(RESOLVED_NAME).to.equal('_RESOLVED');
+      expect(REJECTED_NAME).to.equal('_REJECTED');
   });
   it('returns the resolved strings with default values', () => {
     expect(resolve('MY_ACTION')).to.equal('MY_ACTION_RESOLVED');

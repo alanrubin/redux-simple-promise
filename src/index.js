@@ -4,7 +4,7 @@ function isPromise(val) {
   return val && typeof val.then === 'function';
 }
 
-let [RESOLVED_NAME, REJECTED_NAME] = ['_RESOLVED', '_REJECTED'];
+export let [RESOLVED_NAME, REJECTED_NAME] = ['_RESOLVED', '_REJECTED'];
 
 export function resolve(actionName) {
   return actionName + RESOLVED_NAME;
