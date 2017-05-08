@@ -18,8 +18,8 @@ describe('before promiseMiddleware is called', () => {
   });
 
   it('export the rejected name and resolved name strings with default values', () => {
-      expect(RESOLVED_NAME).to.equal('_RESOLVED');
-      expect(REJECTED_NAME).to.equal('_REJECTED');
+    expect(RESOLVED_NAME).to.equal('_RESOLVED');
+    expect(REJECTED_NAME).to.equal('_REJECTED');
   });
   it('returns the resolved strings with default values', () => {
     expect(resolve('MY_ACTION')).to.equal('MY_ACTION_RESOLVED');
