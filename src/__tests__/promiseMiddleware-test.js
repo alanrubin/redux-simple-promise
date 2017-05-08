@@ -1,14 +1,14 @@
-import promiseMiddleware from '../';
 import { spy } from 'sinon';
-import { resolve, reject } from '../';
+import { resolve, reject, promiseMiddleware } from '../';
 
 function noop() {}
 const GIVE_ME_META = 'GIVE_ME_META';
 function metaMiddleware() {
-  return next => action =>
+  return next => (action) => {
     action.type === GIVE_ME_META
       ? next({ ...action, meta: 'here you go' })
       : next(action);
+  };
 }
 
 describe('before promiseMiddleware is called', () => {
@@ -110,9 +110,9 @@ describe('promiseMiddleware', () => {
   });
 
   it('returns the original promise from dispatch', () => {
-    let promiseDispatched = new Promise(() => {});
+    const promiseDispatched = new Promise(() => {});
 
-    let dispatchedResult = dispatch({
+    const dispatchedResult = dispatch({
       type: 'ACTION_TYPE_RESOLVE',
       payload: {
         promise: promiseDispatched,
@@ -124,9 +124,9 @@ describe('promiseMiddleware', () => {
   });
 
   it('resolves the original promise results from dispatch', () => {
-    let promiseDispatched = Promise.resolve(foobar);
+    const promiseDispatched = Promise.resolve(foobar);
 
-    let dispatchedResult = dispatch({
+    const dispatchedResult = dispatch({
       type: 'ACTION_TYPE_RESOLVE',
       payload: {
         promise: promiseDispatched,
@@ -137,9 +137,9 @@ describe('promiseMiddleware', () => {
   });
 
   it('reject the original promise from dispatch', () => {
-    let promiseDispatched = Promise.reject(err);
+    const promiseDispatched = Promise.reject(err);
 
-    let dispatchedResult = dispatch({
+    const dispatchedResult = dispatch({
       type: 'ACTION_TYPE_REJECT',
       payload: {
         promise: promiseDispatched,
