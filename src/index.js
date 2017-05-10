@@ -4,28 +4,19 @@ function isPromise(val) {
   return val && typeof val.then === 'function';
 }
 
-export const [RESOLVED_NAME, REJECTED_NAME] = ['_RESOLVED', '_REJECTED'];
+export const RESOLVED_NAME = '_RESOLVED';
+export const REJECTED_NAME = '_REJECTED';
 
-export function resolve(actionName) {
-  return actionName + RESOLVED_NAME;
-}
+export const resolve = (actionName, resolvedName = RESOLVED_NAME) => actionName + resolvedName;
 
-export function reject(actionName) {
-  return actionName + REJECTED_NAME;
-}
+export const reject = (actionName, rejectedName = REJECTED_NAME) => actionName + rejectedName;
 
-export function unresolve(actionName) {
-  return actionName.replace(RESOLVED_NAME, '');
-}
+export const unresolve = (actionName, resolvedName = RESOLVED_NAME) => actionName.replace(resolvedName, '');
 
-export function unreject(actionName) {
-  return actionName.replace(REJECTED_NAME, '');
-}
+export const unreject = (actionName, rejectedName = REJECTED_NAME) => actionName.replace(rejectedName, '');
 
-export default function promiseMiddleware(resolvedName, rejectedName) {
-  [RESOLVED_NAME, REJECTED_NAME] = [resolvedName || RESOLVED_NAME, rejectedName || REJECTED_NAME];
-
-  return ({ dispatch }) => next => (action) => {
+export function createPromiseMiddleware(resolvedName = RESOLVED_NAME, rejectedName = REJECTED_NAME) {
+  const middleware = ({ dispatch }) => next => (action) => {
 
     if (!isFSA(action) || !action.payload || !isPromise(action.payload.promise)) {
       return next(action);
@@ -71,4 +62,16 @@ export default function promiseMiddleware(resolvedName, rejectedName) {
       }
     );
   };
+
+  middleware.RESOLVED_NAME = resolvedName;
+  middleware.REJECTED_NAME = rejectedName;
+
+  middleware.resolve = actionName => resolve(actionName, resolvedName);
+  middleware.reject = actionName => reject(actionName, rejectedName);
+  middleware.unresolve = actionName => unresolve(actionName, resolvedName);
+  middleware.unreject = actionName => unreject(actionName, rejectedName);
+
+  return middleware;
 }
+
+export default createPromiseMiddleware();

@@ -47,6 +47,7 @@ describe('promiseMiddleware', () => {
     foobar = { foo: 'bar' };
     err = new Error();
   });
+
   it('dispatches first action before promise without arguments', () => {
     dispatch({
       type: 'ACTION_TYPE',
