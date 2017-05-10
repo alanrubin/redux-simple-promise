@@ -51,13 +51,33 @@ export default function promiseMiddleware(resolvedName, rejectedName) {
 
     dispatch(newAction);
 
+    // Create a base for the next action containing the metadata.
+    let nextActionBase = {
+      meta: {
+        ...action.meta,
+        payload: {
+          ...newAction.payload
+        }
+      }
+    };
+
+    if (Object.keys(nextActionBase.meta.payload).length === 0) {
+      // No arguments were given beside the promise, no need to include them
+      // in the meta.
+      delete nextActionBase.meta.payload;
+    }
+    if (Object.keys(nextActionBase.meta).length === 0) {
+      // No meta was included either, remove all meta.
+      delete nextActionBase.meta;
+    }
+
     // (2) Listen to promise and dispatch payload with new actionName
     return action.payload.promise.then(
       (result) => {
         dispatch({
           type: resolve(action.type, resolvedName),
           payload: result,
-          meta: newAction.payload
+          ...nextActionBase
         });
         return result;
       },
@@ -65,9 +85,9 @@ export default function promiseMiddleware(resolvedName, rejectedName) {
         dispatch({
           type: reject(action.type, rejectedName),
           payload: error,
-          meta: newAction.payload
+          ...nextActionBase
         });
-        return error;
+        throw error;
       }
     );
   };
