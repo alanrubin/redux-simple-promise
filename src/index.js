@@ -14,6 +14,14 @@ export function reject(actionName) {
   return actionName + REJECTED_NAME;
 }
 
+export function unresolve(actionName) {
+  return actionName.replace(RESOLVED_NAME, '');
+}
+
+export function unreject(actionName) {
+  return actionName.replace(REJECTED_NAME, '');
+}
+
 export default function promiseMiddleware(resolvedName, rejectedName) {
   [RESOLVED_NAME, REJECTED_NAME] = [resolvedName || RESOLVED_NAME, rejectedName || REJECTED_NAME];
 
