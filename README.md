@@ -23,7 +23,7 @@ composeStoreWithMiddleware = applyMiddleware(
 
 ```
 
-To use the middleware, dispatch a `promise` property and optional additional properties within the `payload` of the action and specify the action `type` string as you normally do. 
+To use the middleware, dispatch a `promise` property and optional additional properties within the `payload` of the action and specify the action `type` string as you normally do.
 
 The pending action is dispatched immediately, with `type` the same as the original dispatching action with all original `payload` properties apart from the `promise` as the payload object (those are useful for optimistic updates). The resolve action is dispatched only if the promise is resolved, e.g., if it was successful; and the rejected action is dispatched only if the promise is rejected, e.g., if an error occurred.
 
@@ -51,7 +51,7 @@ will dispatch immediatelly
 	type: 'LOAD_USER',
 	payload: {
 		username: 'alanrubin'
-	} 
+	}
 }
 ```
 
@@ -106,7 +106,31 @@ function users(state = {}, action) {
     return state;
   }
 }
+```
 
+Similarly you can use `unresolve` and `unreject` functions available to reverse the action string. This is useful specially if action.type as a key in the state tree, so we could obtain the same string when ACTION, resolve(ACTION) and reject(ACTION) is called in the reducer.
+
+```js
+import { resolve, reject, unresolve, unreject } from 'redux-simple-promise';
+
+function users(state = {}, action) {
+  switch (action.type) {
+  case LOAD_USER:
+    return Object.assign({}, state, {
+      [LOAD_USER]: { isLoading: true }
+    });
+  case resolve(LOAD_USER):
+    return Object.assign({}, state, {
+      [unresolve(LOAD_USER)]: action.payload // From LOAD_USER_RESOLVED to LOAD_USER
+    });
+  case reject(LOAD_USER):
+  	return Object.assign({}, state, {
+      [unreject(LOAD_USER)]: { error: action.payload } // From LOAD_USER_REJECTED to LOAD_USER
+    });
+  default:
+    return state;
+  }
+}
 ```
 
 ## Configuration
